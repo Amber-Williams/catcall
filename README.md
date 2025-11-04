@@ -1,18 +1,10 @@
 # catcall
-
-https://pypi.org/project/catcall/1.0.0/
 **catcall** is a command‐line tool that displays a random cat from [CATAAS](https://cataas.com) as high‐resolution ASCII art, beautifully quantized to the eight‑colour [#justparchment8](https://lospec.com/palette-list/justparchment8) palette.
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/5ebdefea-46f8-42ea-8133-9411729b1e60" width="600" />
+</p>
 
-<img src="/assets/catcall-demo.mov" width="400px"/>
-
-## Features
-
-- 🐱 Fetches random cat images from CATAAS
-- 🎨 Renders in the aesthetic #justparchment8 colour palette
-- 📐 Auto‐fits to your terminal size using half‐block characters for double vertical resolution
-- 🏷️ Supports CATAAS tags (e.g., `cute`, `orange`, `sleeping`)
-- 🎯 Requires a true‐colour (24‐bit) capable terminal
 
 ## Installation
 
