@@ -55,14 +55,15 @@ def fetch_cat(width=160, height=160, tags=None):
     url = "https://cataas.com/cat"
     if tags:
         url += "/" + "/".join(tags)
-    params = {"width": str(width), "height": str(height)}
+    # Request at 2× to give LANCZOS more source detail before quantising.
+    params = {"width": str(width * 2), "height": str(height * 2)}
     headers = {"Accept": "image/jpeg,image/png;q=0.9"}
     r = requests.get(url, params=params, headers=headers, timeout=30)
     r.raise_for_status()
     img = Image.open(io.BytesIO(r.content))
     if getattr(img, "is_animated", False):
         img.seek(0)
-    return img.convert("RGB")
+    return img.convert("RGB").resize((width, height), Image.LANCZOS)
 
 def quantize(img):
     px = img.load()

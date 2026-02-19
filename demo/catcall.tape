@@ -4,9 +4,9 @@
 Output demo/catcall.gif
 
 Set Shell      bash
-Set FontSize   14
-Set Width      900
-Set Height     800
+Set FontSize   20
+Set Width      1400
+Set Height     1200
 Set Padding    8
 Set TypingSpeed 80ms
 
