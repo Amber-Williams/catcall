@@ -29,22 +29,22 @@ Screenshot demo/screenshot-w100.png
 
 Sleep 500ms
 
-# ── Tagged: screaming ────────────────────────────────────────────────────────
+# ── Tagged: blep ─────────────────────────────────────────────────────────────
 Ctrl+L
-Type "catcall -w 100 -H 100 screaming"
+Type "catcall -w 100 -H 100 blep"
 Sleep 500ms
 Enter
 Sleep 5s
-Screenshot demo/screenshot-screaming.png
+Screenshot demo/screenshot-blep.png
 
 Sleep 500ms
 
-# ── Tagged: scared ───────────────────────────────────────────────────────────
+# ── Tagged: zoomies ──────────────────────────────────────────────────────────
 Ctrl+L
-Type "catcall -w 100 -H 100 scared"
+Type "catcall -w 100 -H 100 zoomies"
 Sleep 500ms
 Enter
 Sleep 5s
-Screenshot demo/screenshot-scared.png
+Screenshot demo/screenshot-zoomies.png
 
 Sleep 1s
