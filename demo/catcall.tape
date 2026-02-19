@@ -4,47 +4,47 @@
 Output demo/catcall.gif
 
 Set Shell      bash
-Set FontSize   16
-Set Width      700
-Set Height     450
+Set FontSize   14
+Set Width      900
+Set Height     800
 Set Padding    8
 Set TypingSpeed 80ms
 
-# ── Help ────────────────────────────────────────────────────────────────────
-Type "catcall --help"
+# ── Plain catcall (auto-fit to terminal) ────────────────────────────────────
+Type "catcall"
 Sleep 500ms
 Enter
+Sleep 5s
+Screenshot demo/screenshot-simple.png
+
 Sleep 1s
-Screenshot demo/screenshot-help.png
 
-Sleep 1s
-
-# ── Basic cat (tiny, fast) ───────────────────────────────────────────────────
+# ── Explicit size ─────────────────────────────────────────────────────────────
 Ctrl+L
-Type "catcall -w 20 -H 20"
+Type "catcall -w 100 -H 100"
 Sleep 500ms
 Enter
 Sleep 5s
-Screenshot demo/screenshot-basic.png
+Screenshot demo/screenshot-w100.png
 
 Sleep 500ms
 
-# ── Tagged cat ──────────────────────────────────────────────────────────────
+# ── Tagged: screaming ────────────────────────────────────────────────────────
 Ctrl+L
-Type "catcall -w 20 -H 20 cute"
+Type "catcall -w 100 -H 100 screaming"
 Sleep 500ms
 Enter
 Sleep 5s
-Screenshot demo/screenshot-cute.png
+Screenshot demo/screenshot-screaming.png
 
 Sleep 500ms
 
-# ── No-square (rectangular fit preview) ──────────────────────────────────────
+# ── Tagged: scared ───────────────────────────────────────────────────────────
 Ctrl+L
-Type "catcall -w 20 -H 20 --no-square orange"
+Type "catcall -w 100 -H 100 scared"
 Sleep 500ms
 Enter
 Sleep 5s
-Screenshot demo/screenshot-no-square.png
+Screenshot demo/screenshot-scared.png
 
 Sleep 1s
