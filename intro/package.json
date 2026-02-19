@@ -1,0 +1,24 @@
+{
+  "name": "catcall-intro",
+  "version": "1.0.0",
+  "description": "Cinematic intro for catcall CLI — built with Remotion",
+  "scripts": {
+    "start": "remotion studio",
+    "render": "remotion render CatCallIntro out/intro.mp4 --codec=h264",
+    "render:gif": "remotion render CatCallIntro out/intro.gif"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.425",
+    "remotion": "4.0.425",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "typescript": "^5.4.0"
+  },
+  "remotion": {
+    "entryPoint": "./src/index.ts"
+  }
+}

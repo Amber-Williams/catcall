@@ -533,4 +533,21 @@ this file:'
 
 ---
 
+## Gallery
+
+### Animated demo
+
+![catcall demo](catcall.gif)
+
+### Screenshots
+
+| Command | Preview |
+|---|---|
+| `catcall` | ![auto-fit random cat](screenshot-simple.png) |
+| `catcall -w 100 -H 100` | ![100×100 explicit size](screenshot-w100.png) |
+| `catcall -w 100 -H 100 blep` | ![blep tagged cat](screenshot-blep.png) |
+| `catcall -w 100 -H 100 zoomies` | ![zoomies tagged cat](screenshot-zoomies.png) |
+
+---
+
 *Built with [showboat](https://github.com/simonw/showboat) on 2026-02-19.*

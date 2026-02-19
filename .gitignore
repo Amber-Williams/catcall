@@ -41,3 +41,8 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Node / Remotion
+node_modules/
+intro/out/
+.remotion/
