@@ -535,6 +535,10 @@ this file:'
 
 ## Gallery
 
+### Intro video
+
+<video src="intro.mp4" controls width="100%"></video>
+
 ### Animated demo
 
 ![catcall demo](catcall.gif)
