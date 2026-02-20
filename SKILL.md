@@ -145,61 +145,55 @@ When asked to **generate a newsletter**, run steps 1–3 automatically. If fewer
 
 ### Generate TTS audio from a bookmark's snapshot
 
-Fetch a bookmark's snapshot text, clean it, and pipe it through a text-to-speech tool.
+Use `queso_tts.py` to convert any bookmark's snapshot into a clean MP3 audio file via the OpenAI TTS API. The script handles Markdown cleaning, chunking for long articles, and automatic filename generation.
 
-**Fetch the snapshot for a specific bookmark by ID:**
-
-```bash
-curl -s "https://quesobookmarks.com/api/v1/bookmarks/<ID>" \
-  -H "Authorization: Bearer $QUESO_TOKEN" \
-  | jq -r '.snapshot'
-```
-
-**Or find a bookmark by title first:**
+**Requirements:**
 
 ```bash
-curl -s -G "https://quesobookmarks.com/api/v1/bookmarks" \
-  -H "Authorization: Bearer $QUESO_TOKEN" \
-  --data-urlencode "search=<title keywords>" \
-  --data-urlencode "fields[]=id" \
-  --data-urlencode "fields[]=title" \
-  --data-urlencode "fields[]=snapshot" \
-  --data-urlencode "limit=5"
+pip install requests
+export QUESO_TOKEN="..."
+export OPENAI_API_KEY="..."
+# ffmpeg required on PATH only for articles that exceed 4,000 characters
 ```
 
-**Generate audio (macOS):**
+**By bookmark ID:**
 
 ```bash
-curl -s "https://quesobookmarks.com/api/v1/bookmarks/<ID>" \
-  -H "Authorization: Bearer $QUESO_TOKEN" \
-  | jq -r '.snapshot' \
-  | say -v Samantha -o article.aiff
+python queso_tts.py 696
+# → saves: everything-i-know-about-good-api-design.mp3
 ```
 
-**Generate audio (Linux with espeak):**
+**By title search:**
 
 ```bash
-curl -s "https://quesobookmarks.com/api/v1/bookmarks/<ID>" \
-  -H "Authorization: Bearer $QUESO_TOKEN" \
-  | jq -r '.snapshot' \
-  | espeak --stdin -w article.wav
+python queso_tts.py --search "api design"
+# → finds the closest match, then generates audio
 ```
 
-**Generate audio via OpenAI TTS API** (higher quality, requires `OPENAI_API_KEY`):
+**Custom voice or output path:**
 
 ```bash
-SNAPSHOT=$(curl -s "https://quesobookmarks.com/api/v1/bookmarks/<ID>" \
-  -H "Authorization: Bearer $QUESO_TOKEN" \
-  | jq -r '.snapshot')
-
-curl -s https://api.openai.com/v1/audio/speech \
-  -H "Authorization: Bearer $OPENAI_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d "{\"model\":\"tts-1\",\"input\":$(echo "$SNAPSHOT" | jq -Rs .),\"voice\":\"nova\"}" \
-  --output article.mp3
+python queso_tts.py 696 --voice shimmer --output api-design.mp3
 ```
 
-When asked to **generate TTS audio** for a bookmark, first find the bookmark (ask for a title, tag, or ID if not given), confirm the title with the user, then run the appropriate command for their platform. Prefer the OpenAI TTS step if `OPENAI_API_KEY` is set.
+Available voices: `alloy`, `echo`, `fable`, `onyx`, `nova` (default), `shimmer`
+
+**What the script does:**
+
+1. Fetches the bookmark's `snapshot` field from the Queso API
+2. Strips Markdown syntax (headings, links, bold, code blocks, HTML) so the spoken text is clean prose
+3. Splits the text into ≤ 4,000-character chunks at sentence boundaries (OpenAI TTS limit is 4,096 chars)
+4. Calls `tts-1-hd` for each chunk
+5. Concatenates all chunks into a single MP3 (requires `ffmpeg` if more than one chunk)
+6. Saves to `<slugified-title>.mp3` unless `--output` is specified
+
+When asked to **generate TTS audio** for a bookmark, first identify the bookmark (ask for a title, tag, or ID if not provided), then run:
+
+```bash
+python queso_tts.py --search "<title keywords>"
+```
+
+Report the output filename and file size when done.
 
 ---
 
