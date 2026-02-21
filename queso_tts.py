@@ -15,6 +15,13 @@ Requirements:
 Optional (for multi-chunk articles):
     ffmpeg must be on PATH to concatenate audio chunks
 """
+# Pipeline:
+#   1. Fetch snapshot from Queso API
+#   2. Replace fenced code blocks with spoken descriptions via OpenAI chat
+#   3. Strip remaining Markdown syntax
+#   4. Chunk to stay within OpenAI TTS 4,096-char limit
+#   5. Generate MP3 per chunk via tts-1-hd
+#   6. Concatenate chunks with ffmpeg (if needed) → single MP3
 
 import argparse
 import os
@@ -88,13 +95,67 @@ def fetch_bookmark_by_search(query, token):
 
 
 # ---------------------------------------------------------------------------
+# Code block replacement
+# ---------------------------------------------------------------------------
+
+def describe_code_block(code, lang, article_title, surrounding_context, openai_key):
+    """Ask OpenAI chat to describe a code block in one spoken sentence."""
+    lang_hint = f" ({lang})" if lang else ""
+    prompt = (
+        f'You are helping convert an article titled "{article_title}" into audio.\n'
+        f"The following{lang_hint} code block appears in this context:\n\n"
+        f"--- context ---\n{surrounding_context}\n--- end context ---\n\n"
+        f"Code:\n```\n{code}\n```\n\n"
+        "Write a single, concise sentence (no more than 25 words) describing what this "
+        "code does in the context of the article. Start with the language if relevant. "
+        "Do not include any code syntax in your response."
+    )
+    r = requests.post(
+        "https://api.openai.com/v1/chat/completions",
+        headers={
+            "Authorization": f"Bearer {openai_key}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "model": "gpt-4o-mini",
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": 60,
+            "temperature": 0.3,
+        },
+        timeout=30,
+    )
+    r.raise_for_status()
+    return r.json()["choices"][0]["message"]["content"].strip()
+
+
+def replace_code_blocks(text, article_title, openai_key):
+    """Replace each fenced code block with a spoken [description]."""
+    pattern = re.compile(r"```(\w*)\n?([\s\S]*?)```")
+    blocks = list(pattern.finditer(text))
+    if not blocks:
+        return text
+
+    print(f"  Describing {len(blocks)} code block(s)...")
+    result = text
+    # Iterate in reverse so replacement positions stay valid
+    for match in reversed(blocks):
+        lang = match.group(1).strip()
+        code = match.group(2).strip()
+        # Grab up to 300 chars before the block as context
+        start = match.start()
+        surrounding = text[max(0, start - 300):start].strip()
+        description = describe_code_block(code, lang, article_title, surrounding, openai_key)
+        result = result[:match.start()] + f"[{description}]" + result[match.end():]
+
+    return result
+
+
+# ---------------------------------------------------------------------------
 # Text cleaning
 # ---------------------------------------------------------------------------
 
 def clean_markdown(text):
     """Strip Markdown formatting so TTS reads clean prose."""
-    # Remove fenced code blocks entirely — they don't speak well
-    text = re.sub(r"```[\s\S]*?```", " ", text)
     # Inline code → bare text
     text = re.sub(r"`([^`]+)`", r"\1", text)
     # Images → nothing
@@ -248,8 +309,9 @@ def main():
     if not snapshot:
         sys.exit("Error: this bookmark has no saved snapshot text.")
 
-    # --- Clean & chunk ---
-    text = clean_markdown(snapshot)
+    # --- Replace code blocks, then clean & chunk ---
+    text = replace_code_blocks(snapshot, title, openai_key)
+    text = clean_markdown(text)
     chunks = chunk_text(text)
     print(f"Text    : {len(text):,} chars → {len(chunks)} chunk(s)")
 

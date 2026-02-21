@@ -181,11 +181,12 @@ Available voices: `alloy`, `echo`, `fable`, `onyx`, `nova` (default), `shimmer`
 **What the script does:**
 
 1. Fetches the bookmark's `snapshot` field from the Queso API
-2. Strips Markdown syntax (headings, links, bold, code blocks, HTML) so the spoken text is clean prose
-3. Splits the text into ≤ 4,000-character chunks at sentence boundaries (OpenAI TTS limit is 4,096 chars)
-4. Calls `tts-1-hd` for each chunk
-5. Concatenates all chunks into a single MP3 (requires `ffmpeg` if more than one chunk)
-6. Saves to `<slugified-title>.mp3` unless `--output` is specified
+2. Replaces each fenced code block with a spoken description via `gpt-4o-mini` — e.g. `[Ruby code that establishes a thread-safe tenant database connection pool]` — so listeners understand what the code does without hearing raw syntax read aloud
+3. Strips remaining Markdown syntax (headings, links, bold, HTML) so the spoken text is clean prose
+4. Splits the text into ≤ 4,000-character chunks at sentence boundaries (OpenAI TTS limit is 4,096 chars)
+5. Calls `tts-1-hd` for each chunk
+6. Concatenates all chunks into a single MP3 (requires `ffmpeg` if more than one chunk)
+7. Saves to `<slugified-title>.mp3` unless `--output` is specified
 
 When asked to **generate TTS audio** for a bookmark, first identify the bookmark (ask for a title, tag, or ID if not provided), then run:
 
