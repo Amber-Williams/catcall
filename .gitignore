@@ -41,3 +41,8 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Generated audio
+*.mp3
+*.aiff
+*.wav
